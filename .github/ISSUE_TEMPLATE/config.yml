@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Wayfinder map (planning)
+    url: https://github.com/jakewisnieski/vacationers/issues?q=label%3Awayfinder%3Amap
+    about: Product decisions are charted on the wayfinder map, not as feature issues. Start there for planning.

@@ -1,0 +1,79 @@
+<!doctype html>
+<!-- PROTOTYPE — throwaway. Direction B: "Wanderlust" (warm / travel / imagery-forward) -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacationers — Direction B: Wanderlust</title>
+<style>
+  :root{--sand:#faf4ea;--cream:#fffdf9;--ink:#2a2320;--muted:#8a7d70;--terra:#c8613f;--teal:#0f766e;--line:#efe6d8;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--sand);color:var(--ink);font-size:15px}
+  .proto{background:#2a2320;color:#e8dccb;font-size:11px;text-align:center;padding:4px;letter-spacing:.05em}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 32px}
+  .brand{font-weight:700;font-size:20px;letter-spacing:-.01em}
+  .brand b{color:var(--terra)}
+  nav a{color:var(--muted);text-decoration:none;margin:0 12px;font-weight:600;font-size:14px}
+  nav a.active{color:var(--terra)}
+  .hero{margin:0 20px;border-radius:22px;overflow:hidden;position:relative;color:#fff;
+        background:linear-gradient(120deg,#e08a5a,#c8613f 45%,#7c3f57 100%);padding:34px 34px 78px}
+  .hero:after{content:"";position:absolute;inset:0;background:radial-gradient(1200px 200px at 80% -10%,rgba(255,255,255,.25),transparent);pointer-events:none}
+  .hero .kick{opacity:.9;font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+  .hero h1{font-size:38px;margin:6px 0 6px;font-weight:700;letter-spacing:-.01em}
+  .hero .count{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 14px;font-weight:600;font-size:13px;backdrop-filter:blur(4px)}
+  .wrap{max-width:1040px;margin:0 auto}
+  .big3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:-58px 32px 8px;position:relative}
+  .card{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 40px -22px rgba(80,50,30,.45)}
+  .card .ic{font-size:22px}
+  .card .lbl{color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+  .card .val{font-size:22px;font-weight:700;margin:6px 0 4px}
+  .card .sub{color:var(--muted);font-size:13.5px}
+  .card .chip{display:inline-block;background:#f0efe8;color:var(--teal);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;margin-top:8px}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;padding:16px 32px 34px}
+  .panel{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+  .panel h2{font-size:18px;margin:0 0 12px}
+  .todo{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px dashed var(--line)}
+  .todo:first-of-type{border-top:none}
+  .todo .em{width:30px;height:30px;border-radius:9px;background:#fbeee6;display:grid;place-items:center;flex:none}
+  .todo .t{flex:1}.todo .go{color:var(--terra);font-weight:700}
+  .feed{display:flex;gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+  .feed:first-of-type{border-top:none}
+  .feed .who{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;flex:none}
+  .feed time{color:var(--muted);font-size:12.5px}
+</style></head>
+<body>
+<div class="proto">PROTOTYPE — throwaway · Direction B · "Wanderlust"</div>
+<header>
+  <div class="brand serif">Vacation<b>ers</b></div>
+  <nav><a class="active">Home</a><a>Ideas</a><a>To-Do</a><a>Dates</a><a>Reservations</a></nav>
+</header>
+<div class="hero">
+  <div class="wrap">
+    <div class="kick">The annual trip · Planning</div>
+    <h1 class="serif">Guys' Trip 2026</h1>
+    <span class="count">✈️ Countdown starts when dates lock — 3 of 4 in</span>
+  </div>
+</div>
+<div class="big3">
+  <div class="card"><div class="ic">📍</div><div class="lbl">Destination</div><div class="val serif">Nashville</div><div class="sub">Leading of 3 · Austin, Denver still in</div><span class="chip">Voting open · 5/8</span></div>
+  <div class="card"><div class="ic">🗓️</div><div class="lbl">Dates</div><div class="val serif">Oct 9–12</div><div class="sub">Best overlap so far</div><span class="chip">3 of 4 submitted</span></div>
+  <div class="card"><div class="ic">🧑‍🤝‍🧑</div><div class="lbl">Who's in</div><div class="val serif">3 in · 1 maybe</div><div class="sub">Jake · Mike · Chris · <span style="opacity:.6">Dan?</span></div><span class="chip">Nudge Dan</span></div>
+</div>
+<div class="wrap">
+  <div class="grid">
+    <div class="panel">
+      <h2 class="serif">Your move</h2>
+      <div class="todo"><div class="em">🗳️</div><div class="t">Vote on the destination — 2 left</div><span class="go">Vote →</span></div>
+      <div class="todo"><div class="em">🏠</div><div class="t">Your task: book the Airbnb</div><span class="go">Open →</span></div>
+      <div class="todo"><div class="em">🚗</div><div class="t">Poll: rent a car or rideshare?</div><span class="go">Answer →</span></div>
+    </div>
+    <div class="panel">
+      <h2 class="serif">Around the campfire</h2>
+      <div class="feed"><div class="who" style="background:#0f766e">MK</div><div><b>Mike</b> added “Broadway honky-tonks”<div><time>2h ago</time></div></div></div>
+      <div class="feed"><div class="who" style="background:#c8613f">DN</div><div><b>Dan</b> voted for Nashville<div><time>5h ago</time></div></div></div>
+      <div class="feed"><div class="who" style="background:#7c3f57">CH</div><div><b>Chris</b>: “can't do the 16th”<div><time>Yesterday</time></div></div></div>
+      <div class="feed"><div class="who" style="background:#b45309">JW</div><div><b>You</b> sourced 6 Nashville ideas from the web<div><time>Yesterday</time></div></div></div>
+    </div>
+  </div>
+</div>
+</body></html>

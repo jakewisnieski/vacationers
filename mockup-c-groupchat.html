@@ -1,0 +1,82 @@
+<!doctype html>
+<!-- PROTOTYPE — throwaway. Direction C: "Group Chat+" (social / feed-first / playful) -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacationers — Direction C: Group Chat+</title>
+<style>
+  :root{--bg:#0f1220;--panel:#171a2b;--panel2:#1e2237;--ink:#eef0fb;--muted:#9aa0be;--blue:#4f7cff;--green:#22c55e;--amber:#f59e0b;--pink:#ec4899;--line:#272c44;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14.5px}
+  .proto{background:#000;color:#8b90b5;font-size:11px;text-align:center;padding:4px;letter-spacing:.05em}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line)}
+  .brand{font-weight:800;font-size:18px}.brand span{color:var(--blue)}
+  .members{display:flex;align-items:center;gap:6px}
+  .m{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;position:relative}
+  .m.on:after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+  .m.maybe:after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--amber);border:2px solid var(--bg)}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 18px 40px}
+  .hdr{display:flex;align-items:center;gap:10px;margin:6px 2px 14px}
+  .hdr h1{font-size:22px;margin:0;font-weight:800}
+  .tag{background:var(--panel2);color:var(--muted);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700}
+  .status{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .s{flex:1;min-width:150px;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+  .s .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+  .s .v{font-size:17px;font-weight:800;margin:5px 0 2px}
+  .s .u{color:var(--muted);font-size:12.5px}
+  .s .prog{height:6px;border-radius:99px;background:#2a2f4d;margin-top:8px;overflow:hidden}.s .prog>i{display:block;height:100%;background:var(--blue)}
+  .feedlbl{color:var(--muted);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin:6px 4px 10px}
+  .msg{display:flex;gap:10px;margin-bottom:12px}
+  .msg .a{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;flex:none}
+  .bub{background:var(--panel);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:9px 13px;max-width:90%}
+  .bub .n{font-weight:800;font-size:13px}.bub .n b{color:var(--muted);font-weight:600;margin-left:6px;font-size:12px}
+  .bub .rx{margin-top:7px;display:flex;gap:6px}
+  .rx span{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:12px}
+  .action{border-left:3px solid var(--blue);background:var(--panel2)}
+  .btn{display:inline-block;margin-top:8px;background:var(--blue);color:#fff;border-radius:10px;padding:6px 12px;font-weight:800;font-size:13px}
+  .composer{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;color:var(--muted);margin-top:8px}
+</style></head>
+<body>
+<div class="proto">PROTOTYPE — throwaway · Direction C · "Group Chat+"</div>
+<div class="top">
+  <div class="brand">Vacation<span>ers</span></div>
+  <div class="members">
+    <div class="m on" style="background:#4f7cff">JW</div>
+    <div class="m on" style="background:#22c55e">MK</div>
+    <div class="m maybe" style="background:#f59e0b">DN</div>
+    <div class="m on" style="background:#ec4899">CH</div>
+    <span style="color:var(--muted);font-size:12.5px;margin-left:4px">3 in · 1 maybe</span>
+  </div>
+</div>
+<div class="wrap">
+  <div class="hdr"><h1>Guys' Trip 2026</h1><span class="tag">Planning</span></div>
+
+  <div class="status">
+    <div class="s"><div class="k">📍 Destination</div><div class="v">Nashville</div><div class="u">leading of 3 · voting</div><div class="prog"><i style="width:63%"></i></div></div>
+    <div class="s"><div class="k">🗓️ Dates</div><div class="v">Oct 9–12</div><div class="u">3 of 4 submitted</div><div class="prog"><i style="width:75%"></i></div></div>
+    <div class="s"><div class="k">🧑‍🤝‍🧑 Who's in</div><div class="v">3 in · 1 maybe</div><div class="u">waiting on Dan</div><div class="prog"><i style="width:75%"></i></div></div>
+  </div>
+
+  <div class="feedlbl">Latest — caught up in 5 seconds</div>
+
+  <div class="msg"><div class="a action" style="background:#171a2b;border:0;color:#4f7cff">⚡</div>
+    <div class="bub action"><div class="n">Your move <b>· 3 things need you</b></div>
+      Vote on the destination, book the Airbnb, answer the rental-car poll.
+      <div><a class="btn">Catch up →</a></div></div></div>
+
+  <div class="msg"><div class="a" style="background:#22c55e">MK</div>
+    <div class="bub"><div class="n">Mike <b>· added an idea · 2h</b></div>“Broadway honky-tonks” 🎸
+      <div class="rx"><span>🔥 2</span><span>👍 1</span></div></div></div>
+
+  <div class="msg"><div class="a" style="background:#f59e0b">DN</div>
+    <div class="bub"><div class="n">Dan <b>· voted · 5h</b></div>Voted <b>Nashville</b> 🎉<div class="rx"><span>🙌 3</span></div></div></div>
+
+  <div class="msg"><div class="a" style="background:#ec4899">CH</div>
+    <div class="bub"><div class="n">Chris <b>· on Dates · yest.</b></div>“Can't do the 16th, anything earlier works”</div></div>
+
+  <div class="msg"><div class="a" style="background:#4f7cff">JW</div>
+    <div class="bub"><div class="n">You <b>· sourced from web · yest.</b></div>Pulled 6 Nashville ideas 🌐<div class="rx"><span>👀 2</span></div></div></div>
+
+  <div class="composer">💬 Post an idea, start a poll, or drop a comment…</div>
+</div>
+</body></html>

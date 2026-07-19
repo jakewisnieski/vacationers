@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- PROTOTYPE landing page — throwaway (issue #9) -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacationers — dashboard mockups</title>
+<style>
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--accent:#4f46e5}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f6f7f9;color:var(--ink);line-height:1.5}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 22px 60px}
+  .kick{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h1{font-size:30px;margin:6px 0 6px;letter-spacing:-.02em}
+  p.lead{color:var(--muted);margin:0 0 30px;font-size:16px}
+  .note{background:#fff8e6;border:1px solid #f5e2a8;color:#7a5b00;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:26px}
+  a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:14px;transition:.15s}
+  a.card:hover{border-color:#c7d2fe;box-shadow:0 10px 30px -18px rgba(30,30,80,.5);transform:translateY(-1px)}
+  .card .n{font-size:18px;font-weight:700}
+  .card .n b{color:var(--accent)}
+  .card .v{color:var(--muted);font-size:14px;margin-top:3px}
+  .card .go{color:var(--accent);font-weight:700;font-size:13px;margin-top:8px;display:inline-block}
+  footer{color:var(--muted);font-size:12px;margin-top:30px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="kick">Vacationers · Guys' Trip 2026</div>
+  <h1>Dashboard — three visual directions</h1>
+  <p class="lead">Broad-strokes mockups of the app's home screen. All three lead with the big-three statuses (destination · dates · who's in); they differ in layout and vibe. Pick one — or a mix.</p>
+  <div class="note">These are throwaway prototypes with placeholder data — a design conversation, not the real app.</div>
+
+  <a class="card" href="mockup-a-basecamp.html">
+    <div class="n">A · <b>Basecamp</b></div>
+    <div class="v">Clean / utilitarian / dashboard-first — like Linear or Notion. Everything visible at once.</div>
+    <span class="go">Open direction A →</span>
+  </a>
+  <a class="card" href="mockup-b-wanderlust.html">
+    <div class="n">B · <b>Wanderlust</b></div>
+    <div class="v">Warm / travel / imagery-forward — like Airbnb. Feels like a vacation, not a spreadsheet.</div>
+    <span class="go">Open direction B →</span>
+  </a>
+  <a class="card" href="mockup-c-groupchat.html">
+    <div class="n">C · <b>Group Chat+</b></div>
+    <div class="v">Social / feed-first / playful — your group text, leveled up. The activity feed leads.</div>
+    <span class="go">Open direction C →</span>
+  </a>
+
+  <footer>Prototype for issue #9 · github.com/jakewisnieski/vacationers</footer>
+</div>
+</body></html>

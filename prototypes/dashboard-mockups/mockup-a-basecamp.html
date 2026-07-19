@@ -1,0 +1,93 @@
+<!doctype html>
+<!-- PROTOTYPE — throwaway. Direction A: "Basecamp" (clean / utilitarian / dashboard-first) -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacationers — Direction A: Basecamp</title>
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--accent:#4f46e5;--accent-soft:#eef2ff;--green:#16a34a;--amber:#d97706;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  .proto{background:#111827;color:#cbd5e1;font-size:11px;text-align:center;padding:4px;letter-spacing:.05em}
+  header{background:var(--card);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;letter-spacing:-.02em}
+  .brand span{color:var(--accent)}
+  nav a{color:var(--muted);text-decoration:none;margin:0 10px;font-weight:500}
+  nav a.active{color:var(--ink)}
+  .avs{display:flex}
+  .av{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:12px;border:2px solid #fff;margin-left:-8px}
+  main{max-width:1080px;margin:0 auto;padding:24px 28px}
+  .titlerow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+  h1{font-size:22px;margin:0;letter-spacing:-.02em}
+  .stage{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 10px;font-weight:600;font-size:12px}
+  .big3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .stat .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .stat .val{font-size:20px;font-weight:700;margin:8px 0 4px;letter-spacing:-.02em}
+  .stat .sub{color:var(--muted);font-size:13px}
+  .stat.live{border-color:#c7d2fe;box-shadow:0 0 0 3px var(--accent-soft)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
+  .todo{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+  .todo:first-of-type{border-top:none}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none}
+  .todo .t{flex:1}.todo .cta{color:var(--accent);font-weight:600;font-size:13px}
+  .feed{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line);color:#334155}
+  .feed:first-of-type{border-top:none}
+  .feed .who{width:26px;height:26px;border-radius:50%;background:#f1f5f9;color:#475569;display:grid;place-items:center;font-weight:700;font-size:11px;flex:none}
+  .feed time{color:var(--muted);font-size:12px}
+  .bar{height:8px;background:#eef2f7;border-radius:999px;overflow:hidden;margin:6px 0 2px}
+  .bar>i{display:block;height:100%;width:37%;background:var(--green)}
+</style></head>
+<body>
+<div class="proto">PROTOTYPE — throwaway · Direction A · "Basecamp"</div>
+<header>
+  <div class="brand">Vacationers<span>.</span></div>
+  <nav><a class="active">Dashboard</a><a>Destinations</a><a>Activities</a><a>Dates</a><a>Checklist</a></nav>
+  <div class="avs"><div class="av">JW</div><div class="av">MK</div><div class="av">DN</div><div class="av">CH</div></div>
+</header>
+<main>
+  <div class="titlerow"><h1>Guys' Trip 2026</h1><span class="pill">Planning</span></div>
+  <div class="stage">Stage 2 of 5 · deciding destination &amp; dates</div>
+
+  <section class="big3">
+    <div class="stat live">
+      <div class="lbl">Destination</div>
+      <div class="val">Nashville <span style="color:var(--muted);font-weight:500">leading</span></div>
+      <div class="sub">Shortlist of 3 · voting open (5 of 8 votes)</div>
+    </div>
+    <div class="stat live">
+      <div class="lbl">Dates</div>
+      <div class="val">Oct 9–12</div>
+      <div class="sub">Finding dates · 3 of 4 submitted availability</div>
+    </div>
+    <div class="stat">
+      <div class="lbl">Who's in</div>
+      <div class="val">3 in · 1 maybe</div>
+      <div class="sub">Jake, Mike, Chris in · Dan maybe</div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Needs your input</h2>
+      <div class="todo"><span class="dot"></span><span class="t">Vote on the destination — 2 candidates left</span><span class="cta">Vote →</span></div>
+      <div class="todo"><span class="dot"></span><span class="t">Your task: book the Airbnb</span><span class="cta">Open →</span></div>
+      <div class="todo"><span class="dot"></span><span class="t">Poll: rent a car or rideshare?</span><span class="cta">Answer →</span></div>
+      <h2 style="margin-top:18px">Checklist · 3 of 8 done</h2>
+      <div class="bar"><i></i></div>
+      <div class="sub" style="color:var(--muted)">Next up: reserve the rental car (Mike)</div>
+    </div>
+    <div class="panel">
+      <h2>Recent activity</h2>
+      <div class="feed"><div class="who">MK</div><div><b>Mike</b> added activity “Broadway honky-tonks” <div><time>2h ago</time></div></div></div>
+      <div class="feed"><div class="who">DN</div><div><b>Dan</b> voted for Nashville <div><time>5h ago</time></div></div></div>
+      <div class="feed"><div class="who">CH</div><div><b>Chris</b> commented on Dates: “can't do the 16th” <div><time>Yesterday</time></div></div></div>
+      <div class="feed"><div class="who">JW</div><div><b>You</b> sourced 6 ideas for Nashville from the web <div><time>Yesterday</time></div></div></div>
+      <div class="feed"><div class="who">MK</div><div><b>Mike</b> marked “passport check” done <div><time>2d ago</time></div></div></div>
+    </div>
+  </div>
+</main>
+</body></html>

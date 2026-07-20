@@ -10,9 +10,9 @@ export async function GET() {
     await prisma.$queryRaw`SELECT 1`;
     return NextResponse.json({ ok: true, db: "up" });
   } catch (error) {
-    return NextResponse.json(
-      { ok: false, db: "down", error: (error as Error).message },
-      { status: 503 },
-    );
+    // Log the detail server-side; don't leak DB host/port to callers of this
+    // public, unauthenticated probe.
+    console.error("health: db check failed", error);
+    return NextResponse.json({ ok: false, db: "down" }, { status: 503 });
   }
 }

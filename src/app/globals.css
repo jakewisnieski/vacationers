@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Wanderlust · Nightfall — the v1 visual language (#9).
+   Dark navy stage, Electric Dusk hero (blue → indigo → pink),
+   per-member accent slots, serif display + sans body. */
+:root {
+  --stage: #0b1020;
+  --stage-raised: #141a2e;
+  --ink: #e8ecf8;
+  --ink-dim: #9aa3c0;
+  --line: #232b45;
+  --action: #3b82f6;
+  --action-strong: #2563eb;
+
+  /* Electric Dusk hero gradient stops */
+  --dusk-1: #2563eb;
+  --dusk-2: #6d28d9;
+  --dusk-3: #db2777;
+
+  /* per-member accent slots */
+  --accent-1: #38bdf8;
+  --accent-2: #a78bfa;
+  --accent-3: #fb7185;
+  --accent-4: #34d399;
+}
+
+@theme inline {
+  --color-stage: var(--stage);
+  --color-stage-raised: var(--stage-raised);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-line: var(--line);
+  --color-action: var(--action);
+  --color-action-strong: var(--action-strong);
+  --color-dusk-1: var(--dusk-1);
+  --color-dusk-2: var(--dusk-2);
+  --color-dusk-3: var(--dusk-3);
+  --color-accent-1: var(--accent-1);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-accent-4: var(--accent-4);
+  --font-sans: var(--font-sans-body);
+  --font-serif: var(--font-serif-display);
+}
+
+body {
+  background: var(--stage);
+  color: var(--ink);
+  font-family: var(--font-sans-body, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Electric Dusk hero band */
+.hero-dusk {
+  background-image: linear-gradient(135deg, var(--dusk-1), var(--dusk-2), var(--dusk-3));
+}

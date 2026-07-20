@@ -13,20 +13,34 @@
   h1{font-size:30px;margin:6px 0 6px;letter-spacing:-.02em}
   p.lead{color:var(--muted);margin:0 0 30px;font-size:16px}
   .note{background:#fff8e6;border:1px solid #f5e2a8;color:#7a5b00;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:26px}
-  a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:14px;transition:.15s}
+  a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:14px;transition:.15s;position:relative}
   a.card:hover{border-color:#c7d2fe;box-shadow:0 10px 30px -18px rgba(30,30,80,.5);transform:translateY(-1px)}
+  a.card.chosen{border-color:#4f7cff;box-shadow:0 12px 34px -20px rgba(79,124,255,.6)}
   .card .n{font-size:18px;font-weight:700}
   .card .n b{color:var(--accent)}
   .card .v{color:var(--muted);font-size:14px;margin-top:3px}
   .card .go{color:var(--accent);font-weight:700;font-size:13px;margin-top:8px;display:inline-block}
+  .badge{position:absolute;top:16px;right:18px;font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#fff;background:linear-gradient(120deg,#4f7cff,#ec4899);border-radius:999px;padding:3px 10px}
+  .swatch{height:8px;border-radius:99px;margin-top:12px;background:linear-gradient(120deg,#4f7cff,#6d5cff 45%,#ec4899 100%)}
+  .divider{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:26px 0 12px}
   footer{color:var(--muted);font-size:12px;margin-top:30px}
 </style></head>
 <body>
 <div class="wrap">
   <div class="kick">Vacationers · Guys' Trip 2026</div>
-  <h1>Dashboard — three visual directions</h1>
-  <p class="lead">Broad-strokes mockups of the app's home screen. All three lead with the big-three statuses (destination · dates · who's in); they differ in layout and vibe. Pick one — or a mix.</p>
+  <h1>Dashboard — visual direction</h1>
+  <p class="lead">We explored three broad-strokes directions for the app's home screen and landed on a mix. All lead with the big-three statuses (destination · dates · who's in).</p>
   <div class="note">These are throwaway prototypes with placeholder data — a design conversation, not the real app.</div>
+
+  <a class="card chosen" href="mockup-bc-nightfall.html">
+    <span class="badge">✦ Chosen</span>
+    <div class="n">B×C · <b>Wanderlust · Nightfall</b></div>
+    <div class="v">B's warm editorial layout + serif on a dark, vibrant palette, with an "Electric Dusk" (blue→pink) hero. The direction we're building toward.</div>
+    <div class="swatch"></div>
+    <span class="go">Open the chosen direction →</span>
+  </a>
+
+  <div class="divider">The three we started from</div>
 
   <a class="card" href="mockup-a-basecamp.html">
     <div class="n">A · <b>Basecamp</b></div>

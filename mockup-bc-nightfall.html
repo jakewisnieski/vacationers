@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- PROTOTYPE — throwaway. Direction B×C: "Wanderlust · Nightfall" — B's layout/serif on C's dark vibrant palette, Electric Dusk (blue->pink) hero. CHOSEN direction for #9. Do not merge to main. -->
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacationers — B×C: Wanderlust · Nightfall · Electric Dusk (chosen)</title>
+<style>
+  :root{
+    /* C's dark, vibrant coloring */
+    --bg:#0f1220;--panel:#171a2b;--panel2:#1e2237;--ink:#eef0fb;--muted:#9aa0be;--line:#272c44;
+    --blue:#4f7cff;--green:#22c55e;--amber:#f59e0b;--pink:#ec4899;
+    /* B's warm signatures, kept as accents so the travel identity survives on dark */
+    --terra:#5b86ff;--teal:#2dd4bf;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+  .proto{background:#000;color:#8b90b5;font-size:11px;text-align:center;padding:4px;letter-spacing:.05em}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 32px}
+  .brand{font-weight:700;font-size:20px;letter-spacing:-.01em}
+  .brand b{color:var(--terra)}
+  nav a{color:var(--muted);text-decoration:none;margin:0 12px;font-weight:600;font-size:14px;cursor:pointer}
+  nav a.active{color:var(--terra)}
+  /* B's hero band + floating big-three, on a dark stage */
+  .hero{margin:0 20px;border-radius:22px;overflow:hidden;position:relative;color:#fff;
+        background:linear-gradient(120deg,#4f7cff,#6d5cff 45%,#ec4899 100%);padding:34px 34px 78px;
+        box-shadow:0 24px 60px -30px rgba(79,124,255,.5)}
+  .hero:after{content:"";position:absolute;inset:0;background:radial-gradient(1200px 200px at 80% -10%,rgba(255,255,255,.28),transparent);pointer-events:none}
+  .hero .kick{opacity:.92;font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+  .hero h1{font-size:38px;margin:6px 0 10px;font-weight:700;letter-spacing:-.01em}
+  .hero .count{display:inline-block;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 14px;font-weight:600;font-size:13px;backdrop-filter:blur(4px)}
+  .hero .crew{display:flex;align-items:center;gap:-6px;margin-top:16px}
+  .wrap{max-width:1040px;margin:0 auto}
+  /* C's per-member avatars + presence dots */
+  .m{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;position:relative;border:2px solid rgba(255,255,255,.5);margin-left:-6px}
+  .m:first-child{margin-left:0}
+  .m.on:after,.m.maybe:after{content:"";position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border-radius:50%;border:2px solid #3a52b8}
+  .m.on:after{background:var(--green)} .m.maybe:after{background:var(--amber)}
+  .big3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:-58px 32px 8px;position:relative}
+  /* B's soft rounded cards, rebuilt as C's gradient dark panels */
+  .card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 22px 48px -26px rgba(0,0,0,.75)}
+  .card .ic{font-size:22px}
+  .card .lbl{color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+  .card .val{font-size:23px;font-weight:700;margin:6px 0 4px}
+  .card .sub{color:var(--muted);font-size:13.5px}
+  /* C's progress bars on the status cards */
+  .prog{height:6px;border-radius:99px;background:#2a2f4d;margin-top:12px;overflow:hidden}
+  .prog>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--terra),var(--pink))}
+  .prog.d>i{background:linear-gradient(90deg,var(--blue),var(--teal))}
+  .prog.w>i{background:linear-gradient(90deg,var(--green),var(--teal))}
+  .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;padding:16px 32px 34px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+  .panel h2{font-size:18px;margin:0 0 12px}
+  /* B's "Your move" list, C's blue action energy */
+  .todo{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+  .todo:first-of-type{border-top:none}
+  .todo .em{width:32px;height:32px;border-radius:10px;background:#20263f;display:grid;place-items:center;flex:none}
+  .todo .t{flex:1}
+  .todo .go{color:#fff;background:var(--blue);border-radius:9px;padding:5px 11px;font-weight:700;font-size:13px}
+  /* B's "campfire" feed, C's colored avatars + reaction chips */
+  .feed{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  .feed:first-of-type{border-top:none}
+  .feed .who{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;flex:none}
+  .feed .txt b{color:var(--ink)}
+  .feed time{color:var(--muted);font-size:12.5px}
+  .rx{margin-top:7px;display:flex;gap:6px}
+  .rx span{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px}
+  .composer{display:flex;gap:10px;align-items:center;background:var(--panel2);border:1px dashed var(--line);border-radius:14px;padding:11px 14px;color:var(--muted);margin:0 32px 34px}
+</style></head>
+<body>
+<div class="proto">PROTOTYPE — throwaway · B×C · "Wanderlust · Nightfall" HERO: Electric Dusk (blue -> pink)</div>
+<header>
+  <div class="brand serif">Vacation<b>ers</b></div>
+  <nav><a class="active">Home</a><a>Ideas</a><a>To-Do</a><a>Dates</a><a>Reservations</a></nav>
+</header>
+<div class="hero">
+  <div class="wrap">
+    <div class="kick">The annual trip · Planning</div>
+    <h1 class="serif">Guys' Trip 2026</h1>
+    <span class="count">✈️ Countdown starts when dates lock — 3 of 4 in</span>
+    <div class="crew">
+      <div class="m on" style="background:#4f7cff">JW</div>
+      <div class="m on" style="background:#22c55e">MK</div>
+      <div class="m on" style="background:#ec4899">CH</div>
+      <div class="m maybe" style="background:#f59e0b">DN</div>
+    </div>
+  </div>
+</div>
+<div class="big3">
+  <div class="card"><div class="ic">📍</div><div class="lbl">Destination</div><div class="val serif">Nashville</div><div class="sub">Leading of 3 · Austin, Denver still in</div><div class="prog"><i style="width:63%"></i></div></div>
+  <div class="card"><div class="ic">🗓️</div><div class="lbl">Dates</div><div class="val serif">Oct 9–12</div><div class="sub">Best overlap so far · 3 of 4 submitted</div><div class="prog d"><i style="width:75%"></i></div></div>
+  <div class="card"><div class="ic">🧑‍🤝‍🧑</div><div class="lbl">Who's in</div><div class="val serif">3 in · 1 maybe</div><div class="sub">Jake · Mike · Chris · <span style="opacity:.55">Dan?</span></div><div class="prog w"><i style="width:75%"></i></div></div>
+</div>
+<div class="wrap">
+  <div class="grid">
+    <div class="panel">
+      <h2 class="serif">Your move</h2>
+      <div class="todo"><div class="em">🗳️</div><div class="t">Vote on the destination — 2 left</div><span class="go">Vote →</span></div>
+      <div class="todo"><div class="em">🏠</div><div class="t">Your task: book the Airbnb</div><span class="go">Open →</span></div>
+      <div class="todo"><div class="em">🚗</div><div class="t">Poll: rent a car or rideshare?</div><span class="go">Answer →</span></div>
+    </div>
+    <div class="panel">
+      <h2 class="serif">Around the campfire</h2>
+      <div class="feed"><div class="who" style="background:#22c55e">MK</div><div class="txt"><b>Mike</b> added “Broadway honky-tonks” 🎸<div class="rx"><span>🔥 2</span><span>👍 1</span></div></div></div>
+      <div class="feed"><div class="who" style="background:#f59e0b">DN</div><div class="txt"><b>Dan</b> voted for Nashville 🎉<div class="rx"><span>🙌 3</span></div></div></div>
+      <div class="feed"><div class="who" style="background:#ec4899">CH</div><div class="txt"><b>Chris</b>: “can't do the 16th, anything earlier works”<div><time>Yesterday</time></div></div></div>
+      <div class="feed"><div class="who" style="background:#4f7cff">JW</div><div class="txt"><b>You</b> sourced 6 Nashville ideas from the web 🌐<div class="rx"><span>👀 2</span></div></div></div>
+    </div>
+  </div>
+  <div class="composer">💬 Post an idea, start a poll, or drop a comment…</div>
+</div>
+</body></html>

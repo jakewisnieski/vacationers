@@ -11,6 +11,13 @@ dist/
 build/
 .next/
 out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Test / deploy
+/coverage
+.vercel
+*.pem
 
 # Environment / secrets
 .env

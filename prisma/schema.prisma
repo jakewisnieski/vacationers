@@ -1,0 +1,13 @@
+// Vacationers — Prisma schema.
+// #11 stands up the datasource + generator and proves the Neon connection
+// (via /api/health). The data model — Member, allowlist, Trip, TripParticipant —
+// lands in #12.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

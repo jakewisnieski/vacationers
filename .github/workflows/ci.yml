@@ -1,0 +1,57 @@
+name: CI
+
+# The automated half of the build gate (docs/build-gate.md, Gate 0): lint ·
+# typecheck · build · test on every PR to main. Stood up now that the stack is
+# chosen (#8). Until the Next.js app is scaffolded (#11) there is no
+# package.json, so the app steps skip and the workflow passes green — it
+# "activates" automatically the moment package.json lands.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: lint · typecheck · build · test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect app
+        id: detect
+        run: |
+          if [ -f package.json ]; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "app=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No package.json yet — app not scaffolded (#11). Skipping lint/typecheck/build/test; CI activates when the Next.js app lands."
+          fi
+
+      - name: Setup Node
+        if: steps.detect.outputs.app == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        if: steps.detect.outputs.app == 'true'
+        run: npm ci
+
+      - name: Lint
+        if: steps.detect.outputs.app == 'true'
+        run: npm run lint --if-present
+
+      - name: Typecheck
+        if: steps.detect.outputs.app == 'true'
+        run: npm run typecheck --if-present
+
+      - name: Build
+        if: steps.detect.outputs.app == 'true'
+        run: npm run build --if-present
+
+      - name: Test
+        if: steps.detect.outputs.app == 'true'
+        run: npm test --if-present

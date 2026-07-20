@@ -1,7 +1,9 @@
 // Vacationers — Prisma schema.
-// #11 stands up the datasource + generator and proves the Neon connection
-// (via /api/health). The data model — Member, allowlist, Trip, TripParticipant —
-// lands in #12.
+// The relational spine (#12): a mutable, owner-managed member set; Trip as a
+// first-class entity; per-trip participation. Auth adapter tables (User /
+// Account / Session) land with the auth slice (#13). Forward-seam fields for
+// Calendar (#6) and idea-sourcing (#7) are modeled now but unused until their
+// slices — see the comments on each.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,4 +12,118 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+/// A person in the group. The roster is a mutable, owner-managed set (#5):
+/// exactly one owner (Jake), everyone else flat. A Member row is materialized
+/// when an allowlisted email signs in for the first time; the owner is
+/// bootstrapped by the seed.
+model Member {
+  id          String   @id @default(cuid())
+  // citext: email identity + the #5 allowlist gate must be case-insensitive so
+  // an invite/sign-in never mismatches on letter case (jake@ vs Jake@).
+  email       String   @unique @db.Citext
+  name        String?
+  image       String?
+  /// Per-member avatar accent, drawn from the Nightfall palette (#9).
+  accentColor String?
+  isOwner     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  participations     TripParticipant[]
+  calendarConnection CalendarConnection?
+  ideas              Idea[]
+}
+
+/// The DB-authoritative invite allowlist (#5). An email must have an entry here
+/// to be admitted at sign-in; non-members are hard-bounced. Owner-managed via
+/// the in-app roster screen. Distinct from Member: an email is invited here
+/// before (and independently of) ever signing in and becoming a Member.
+model AllowlistEntry {
+  id        String   @id @default(cuid())
+  // citext — case-insensitive to match Member.email (the allowlist gate, #5).
+  email     String   @unique @db.Citext
+  invitedAt DateTime @default(now())
+}
+
+enum TripStatus {
+  planning
+  locked
+  completed
+  archived
+}
+
+/// A first-class trip — one per year, past trips accrue (#5). Access is
+/// group-level (every Member can see every Trip); who is going is modeled
+/// separately via TripParticipant.
+model Trip {
+  id          String     @id @default(cuid())
+  year        Int
+  destination String?
+  startDate   DateTime?  @db.Date
+  endDate     DateTime?  @db.Date
+  status      TripStatus @default(planning)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  participants TripParticipant[]
+  ideas        Idea[]
+}
+
+/// Per-trip participation — the dashboard's "who's in." Availability /
+/// date-finding overlaps only a trip's participants, not the whole roster (#5).
+model TripParticipant {
+  id       String   @id @default(cuid())
+  tripId   String
+  memberId String
+  joinedAt DateTime @default(now())
+
+  /// Forward seam (#6): locking a trip pushes one all-day, multi-day event to
+  /// each participant's primary Google Calendar; we store its event id here so
+  /// the event can be updated or removed later. Null until the trip is synced.
+  calendarEventId String?
+
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([tripId, memberId])
+}
+
+/// Forward seam (#6): a member's opt-in Google Calendar connection. Calendar is
+/// a separate opt-in from sign-in (#5), so this is absent until the member
+/// connects. The refresh token is stored AES-GCM encrypted (key in Vercel's
+/// secret store) — never in plaintext.
+model CalendarConnection {
+  id                    String   @id @default(cuid())
+  memberId              String   @unique
+  encryptedRefreshToken String
+  scopes                String?
+  connectedAt           DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+}
+
+enum IdeaStatus {
+  /// Qwen3-imported and awaiting owner review before it surfaces (#7).
+  suggested
+  approved
+  rejected
+}
+
+/// Forward seam (#7): the destination-ideas board is built in v0.2.0. Modeled
+/// now so the `suggested` review state has a home. Member-authored ideas default
+/// to `approved`; the offline Qwen3 import lands rows as `suggested`, so `author`
+/// is nullable (imported ideas have no member author).
+model Idea {
+  id        String     @id @default(cuid())
+  tripId    String
+  authorId  String?
+  title     String
+  status    IdeaStatus @default(approved)
+  createdAt DateTime   @default(now())
+
+  trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)
 }

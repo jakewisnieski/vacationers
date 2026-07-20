@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 
 // Owner bootstrap (#5): the one privileged account the group starts from.
 // Overridable for other environments; defaults to Jake's account.
-const OWNER_EMAIL = process.env.OWNER_EMAIL ?? "jakewisnieski@gmail.com";
+// `||` (not `??`) so a blank OWNER_EMAIL="" also falls back to the default.
+const OWNER_EMAIL = process.env.OWNER_EMAIL || "jakewisnieski@gmail.com";
 
 async function main() {
   // Admit the owner on the DB-authoritative allowlist, then materialize the

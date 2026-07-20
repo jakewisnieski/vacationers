@@ -20,7 +20,9 @@ datasource db {
 /// bootstrapped by the seed.
 model Member {
   id          String   @id @default(cuid())
-  email       String   @unique
+  // citext: email identity + the #5 allowlist gate must be case-insensitive so
+  // an invite/sign-in never mismatches on letter case (jake@ vs Jake@).
+  email       String   @unique @db.Citext
   name        String?
   image       String?
   /// Per-member avatar accent, drawn from the Nightfall palette (#9).
@@ -40,7 +42,8 @@ model Member {
 /// before (and independently of) ever signing in and becoming a Member.
 model AllowlistEntry {
   id        String   @id @default(cuid())
-  email     String   @unique
+  // citext — case-insensitive to match Member.email (the allowlist gate, #5).
+  email     String   @unique @db.Citext
   invitedAt DateTime @default(now())
 }
 

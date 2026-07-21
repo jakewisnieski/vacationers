@@ -126,8 +126,10 @@ function TripDashboard({
         </div>
       </section>
 
-      {/* Big-three hero cards, floating up over the hero band. */}
-      <section className="-mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {/* Big-three hero cards, floating up over the hero band. `relative z-10`
+          lifts them above the (positioned) hero so its gradient box doesn't
+          paint over their top edge where they overlap. */}
+      <section className="relative z-10 -mt-16 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Big3Card
           icon="📍"
           label="Destination"

@@ -22,7 +22,7 @@ export default async function RosterPage() {
             The roster is managed by your group&apos;s owner.
           </p>
           <Link
-            href="/"
+            href="/dashboard"
             className="mt-6 inline-block rounded-full border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-stage"
           >
             Back home
@@ -45,7 +45,7 @@ export default async function RosterPage() {
       <section className="mx-auto max-w-3xl px-6 py-16">
         <div className="flex items-center justify-between gap-3">
           <h1 className="font-serif text-4xl font-semibold">Roster</h1>
-          <Link href="/" className="text-sm text-ink-dim hover:text-ink">
+          <Link href="/dashboard" className="text-sm text-ink-dim hover:text-ink">
             ← Back home
           </Link>
         </div>

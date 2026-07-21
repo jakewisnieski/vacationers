@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { auth, signIn, signOut } from "@/auth";
 
 export default async function Home() {
@@ -38,19 +39,29 @@ export default async function Home() {
                 Signed in as {user.email}. The trip dashboard lands in a later
                 slice (#15).
               </p>
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirectTo: "/" });
-                }}
-              >
-                <button
-                  type="submit"
-                  className="mt-4 inline-block rounded-full border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-stage"
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                {user.isOwner && (
+                  <Link
+                    href="/roster"
+                    className="inline-block rounded-full bg-action px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-action-strong"
+                  >
+                    Manage roster
+                  </Link>
+                )}
+                <form
+                  action={async () => {
+                    "use server";
+                    await signOut({ redirectTo: "/" });
+                  }}
                 >
-                  Sign out
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    className="inline-block rounded-full border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-stage"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </div>
             </>
           ) : (
             <>

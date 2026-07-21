@@ -51,12 +51,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.memberId =
-          typeof token.memberId === "string" ? token.memberId : "";
+      // Fail closed: only surface an identity when the JWT carries a resolved
+      // Member id. A token without one is not a valid session user, so drop the
+      // user rather than handing back an empty memberId a caller might trust.
+      if (session.user && typeof token.memberId === "string" && token.memberId) {
+        session.user.memberId = token.memberId;
         session.user.isOwner = token.isOwner === true;
+        return session;
       }
-      return session;
+      return { ...session, user: undefined };
     },
   },
 });

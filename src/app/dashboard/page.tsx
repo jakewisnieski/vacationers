@@ -49,8 +49,8 @@ function TopBar({
   isOwner: boolean;
 }) {
   return (
-    <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-      <span className="font-serif text-xl font-semibold">
+    <header className="flex items-center justify-between px-4 py-4 sm:px-6">
+      <span className="font-serif text-xl font-bold">
         Vacation<span className="text-action">ers</span>
       </span>
       <div className="flex items-center gap-3">
@@ -91,7 +91,9 @@ function TripDashboard({
   view: ReturnType<typeof buildDashboardView>;
 }) {
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-20">
+    // Full-bleed: the hero and big-three span the viewport (only a gutter),
+    // matching the prototype — not caged in a narrow centered column.
+    <div className="px-4 pb-20 sm:px-6">
       {/* Electric Dusk hero band with the floating crew (#9). */}
       <section className="hero-dusk relative overflow-hidden rounded-3xl px-8 pb-24 pt-9 text-white shadow-2xl">
         <div
@@ -102,7 +104,7 @@ function TripDashboard({
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/85">
             {view.kicker}
           </p>
-          <h1 className="mt-1.5 font-serif text-4xl font-semibold sm:text-5xl">
+          <h1 className="mt-1.5 font-serif text-4xl font-bold sm:text-5xl">
             {view.title}
           </h1>
           <div className="mt-5 flex items-center">
@@ -139,6 +141,8 @@ function TripDashboard({
               ? "Set for this trip"
               : "Idea board opens in v0.2"
           }
+          variant="dest"
+          filled={view.destination.known}
         />
         <Big3Card
           icon="🗓️"
@@ -149,12 +153,16 @@ function TripDashboard({
               ? "Planned for this trip"
               : "Date-finding opens in a later slice"
           }
+          variant="dates"
+          filled={view.dates.known}
         />
         <Big3Card
           icon="🧑‍🤝‍🧑"
           label="Who's in"
           value={view.whosIn.label}
           sub={view.whosIn.names || "Invites open in a later slice"}
+          variant="crew"
+          filled={view.whosIn.count > 0}
         />
       </section>
 
@@ -183,12 +191,12 @@ function TripDashboard({
 
 function NoTrip() {
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-20">
+    <div className="px-4 pb-20 sm:px-6">
       <section className="hero-dusk relative overflow-hidden rounded-3xl px-8 py-16 text-center text-white shadow-2xl">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/85">
           The annual trip
         </p>
-        <h1 className="mt-1.5 font-serif text-4xl font-semibold sm:text-5xl">
+        <h1 className="mt-1.5 font-serif text-4xl font-bold sm:text-5xl">
           No trip yet
         </h1>
         <p className="mx-auto mt-3 max-w-md text-white/85">
@@ -200,16 +208,30 @@ function NoTrip() {
   );
 }
 
+// Per-card accent bars, echoing the prototype's status bars (#9). Their fill
+// currently reflects only whether the datum is *set* (full when known, empty
+// when not) — a placeholder for the richer vote / date-overlap / attendance
+// progress the v0.2 / v0.4 slices will drive.
+const BAR_GRADIENTS = {
+  dest: "linear-gradient(90deg, var(--dusk-2), var(--dusk-3))",
+  dates: "linear-gradient(90deg, var(--action), var(--accent-1))",
+  crew: "linear-gradient(90deg, var(--accent-4), var(--accent-1))",
+} as const;
+
 function Big3Card({
   icon,
   label,
   value,
   sub,
+  variant,
+  filled,
 }: {
   icon: string;
   label: string;
   value: string;
   sub: string;
+  variant: keyof typeof BAR_GRADIENTS;
+  filled: boolean;
 }) {
   return (
     <div className="rounded-2xl border border-line bg-stage-raised p-5 shadow-xl">
@@ -217,8 +239,17 @@ function Big3Card({
       <div className="mt-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-ink-dim">
         {label}
       </div>
-      <div className="mt-1 font-serif text-2xl font-semibold">{value}</div>
+      <div className="mt-1 font-serif text-2xl font-bold">{value}</div>
       <div className="mt-1 text-sm text-ink-dim">{sub}</div>
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-line">
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: filled ? "100%" : "0%",
+            background: BAR_GRADIENTS[variant],
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -235,7 +266,7 @@ function StubPanel({
   return (
     <div className="rounded-2xl border border-line bg-stage-raised p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-serif text-xl font-semibold">{title}</h2>
+        <h2 className="font-serif text-xl font-bold">{title}</h2>
         <span className="text-lg" aria-hidden>
           {emoji}
         </span>

@@ -1,7 +1,11 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import type { AddIdeaResult } from "@/lib/ideas";
+import {
+  IDEA_DESCRIPTION_MAX,
+  IDEA_TITLE_MAX,
+  type AddIdeaResult,
+} from "@/lib/ideas";
 import { addIdea } from "./actions";
 
 export function AddIdeaForm() {
@@ -22,14 +26,14 @@ export function AddIdeaForm() {
         type="text"
         name="title"
         required
-        maxLength={120}
+        maxLength={IDEA_TITLE_MAX}
         placeholder="Where should we go? (e.g. Reykjavík)"
         className="rounded-xl border border-line bg-stage px-4 py-2.5 text-sm text-ink placeholder:text-ink-dim/60 focus:border-action focus:outline-none"
       />
       <textarea
         name="description"
         rows={2}
-        maxLength={500}
+        maxLength={IDEA_DESCRIPTION_MAX}
         placeholder="Why this one? (optional)"
         className="resize-y rounded-xl border border-line bg-stage px-4 py-2.5 text-sm text-ink placeholder:text-ink-dim/60 focus:border-action focus:outline-none"
       />

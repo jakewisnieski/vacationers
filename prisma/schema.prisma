@@ -112,17 +112,20 @@ enum IdeaStatus {
   rejected
 }
 
-/// Forward seam (#7): the destination-ideas board is built in v0.2.0. Modeled
-/// now so the `suggested` review state has a home. Member-authored ideas default
-/// to `approved`; the offline Qwen3 import lands rows as `suggested`, so `author`
-/// is nullable (imported ideas have no member author).
+/// The destination-ideas board (#26, v0.2.0): each member posts where they'd
+/// like the trip to go. Member-authored ideas default to `approved` and show
+/// immediately; the offline Qwen3 import (v0.4.0) lands rows as `suggested`
+/// awaiting owner review, so `author` is nullable (imported ideas have no member
+/// author). `description` and `url` are the optional pitch + reference link.
 model Idea {
-  id        String     @id @default(cuid())
-  tripId    String
-  authorId  String?
-  title     String
-  status    IdeaStatus @default(approved)
-  createdAt DateTime   @default(now())
+  id          String     @id @default(cuid())
+  tripId      String
+  authorId    String?
+  title       String
+  description String?
+  url         String?
+  status      IdeaStatus @default(approved)
+  createdAt   DateTime   @default(now())
 
   trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
   author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)

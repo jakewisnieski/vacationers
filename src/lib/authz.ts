@@ -18,3 +18,17 @@ export async function requireOwner() {
   }
   return user;
 }
+
+/**
+ * Return the signed-in member, or throw — use to gate member-only mutations
+ * (posting ideas, votes, comments) server-side. A non-null session user always
+ * carries a resolved `memberId` (the session callback fails closed otherwise,
+ * #14), so presence of the user is the whole check.
+ */
+export async function requireMember() {
+  const user = await getSessionUser();
+  if (!user) {
+    throw new Error("Forbidden: sign in as a group member to do that.");
+  }
+  return user;
+}

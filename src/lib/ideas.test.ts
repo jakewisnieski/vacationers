@@ -85,6 +85,8 @@ describe("buildIdeasView", () => {
       url: "https://www.roadtrip.is/loop",
       authorId: me,
       author: { name: "Jake", email: "jake@example.com", accentColor: "#38bdf8" },
+      _count: { votes: 3 },
+      votes: [{ id: "v1" }], // current member has voted
     },
     {
       id: "i2",
@@ -93,6 +95,8 @@ describe("buildIdeasView", () => {
       url: null,
       authorId: "member-2",
       author: { name: null, email: "amy@example.com", accentColor: null },
+      _count: { votes: 1 },
+      votes: [], // current member has not voted
     },
     {
       id: "i3",
@@ -101,6 +105,8 @@ describe("buildIdeasView", () => {
       url: null,
       authorId: null,
       author: null,
+      _count: { votes: 0 },
+      votes: [],
     },
   ];
 
@@ -135,6 +141,16 @@ describe("buildIdeasView", () => {
     );
     expect(card.url).toBeNull();
     expect(card.linkHost).toBeNull();
+  });
+
+  it("surfaces the total vote count and the current member's voted state", () => {
+    const [mine, theirs, imported] = buildIdeasView(rows, me);
+    expect(mine.voteCount).toBe(3);
+    expect(mine.hasVoted).toBe(true);
+    expect(theirs.voteCount).toBe(1);
+    expect(theirs.hasVoted).toBe(false); // votes scoped to me → empty
+    expect(imported.voteCount).toBe(0);
+    expect(imported.hasVoted).toBe(false);
   });
 
   it("uses the explicit accentColor when set, else a stable fallback", () => {

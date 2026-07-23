@@ -76,7 +76,12 @@ export function parseIdeaInput(raw: {
   };
 }
 
-/** The raw shape the page pulls from Prisma — the fields the board needs. */
+/**
+ * The raw shape the page pulls from Prisma — the fields the board needs. The
+ * vote fields mirror the query select: `_count.votes` is the idea's total vote
+ * count, and `votes` is scoped to the current member (so it holds their one row
+ * or nothing — the "have I voted?" signal), never the whole list (#28).
+ */
 export type IdeaRow = {
   id: string;
   title: string;
@@ -84,6 +89,8 @@ export type IdeaRow = {
   url: string | null;
   authorId: string | null;
   author: AuthorInput;
+  _count: { votes: number };
+  votes: { id: string }[];
 };
 
 export type IdeaCard = {
@@ -99,13 +106,17 @@ export type IdeaCard = {
   accent: string;
   /** True when the current member authored it — only then may they delete it. */
   canDelete: boolean;
+  /** Total upvotes on this idea (#28). */
+  voteCount: number;
+  /** True when the current member has upvoted this idea. */
+  hasVoted: boolean;
 };
 
 /**
  * Fold Idea rows (already ordered by the query) into board card view-models,
  * resolving author identity (author-less imported rows show as "Suggested"), a
- * stable accent, a link host, and — crucially — whether the current member may
- * delete each idea (author-only, #26).
+ * stable accent, a link host, whether the current member may delete each idea
+ * (author-only, #26), and its vote count + whether they've upvoted it (#28).
  */
 export function buildIdeasView(
   rows: IdeaRow[],
@@ -127,6 +138,8 @@ export function buildIdeasView(
       url: safeUrl,
       linkHost: safeUrl ? hostOf(safeUrl) : null,
       ...author,
+      voteCount: row._count.votes,
+      hasVoted: row.votes.length > 0,
     };
   });
 }

@@ -6,6 +6,7 @@ import {
   type IdeaRow,
   IDEA_TITLE_MAX,
   IDEA_DESCRIPTION_MAX,
+  IDEA_URL_MAX,
 } from "./ideas";
 
 describe("parseIdeaInput", () => {
@@ -61,6 +62,15 @@ describe("parseIdeaInput", () => {
       title: "ok",
       description: "",
       url: "not a url",
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects an over-long link", () => {
+    const result = parseIdeaInput({
+      title: "ok",
+      description: "",
+      url: `https://example.com/${"x".repeat(IDEA_URL_MAX)}`,
     });
     expect(result.ok).toBe(false);
   });
@@ -129,6 +139,15 @@ describe("buildIdeasView", () => {
     const [mine, theirs] = buildIdeasView(rows, me);
     expect(mine.linkHost).toBe("roadtrip.is");
     expect(theirs.linkHost).toBeNull();
+  });
+
+  it("drops a non-http(s) stored URL so it never becomes a link", () => {
+    const [card] = buildIdeasView(
+      [{ ...rows[0], url: "javascript:alert(1)" }],
+      me,
+    );
+    expect(card.url).toBeNull();
+    expect(card.linkHost).toBeNull();
   });
 
   it("uses the explicit accentColor when set, else a stable fallback", () => {

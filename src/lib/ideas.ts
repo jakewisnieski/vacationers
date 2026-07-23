@@ -7,6 +7,9 @@ import { NIGHTFALL_ACCENTS, displayName, initialsFor } from "./dashboard";
 
 export const IDEA_TITLE_MAX = 120;
 export const IDEA_DESCRIPTION_MAX = 500;
+// Well under Postgres/browser practical URL limits; caps the one otherwise
+// unbounded field so a member can't post a megabyte "link".
+export const IDEA_URL_MAX = 2048;
 
 /** Result of the add-idea action, surfaced inline on the form. */
 export type AddIdeaResult = { ok: true } | { ok: false; error: string };
@@ -46,11 +49,19 @@ export function parseIdeaInput(raw: {
   }
 
   const url = raw.url.trim();
-  if (url && !isValidUrl(url)) {
-    return {
-      ok: false,
-      error: "Enter a valid link (http:// or https://) or leave it blank.",
-    };
+  if (url) {
+    if (url.length > IDEA_URL_MAX) {
+      return {
+        ok: false,
+        error: `Keep the link under ${IDEA_URL_MAX} characters.`,
+      };
+    }
+    if (!isValidUrl(url)) {
+      return {
+        ok: false,
+        error: "Enter a valid link (http:// or https://) or leave it blank.",
+      };
+    }
   }
 
   return {
@@ -118,12 +129,16 @@ export function buildIdeasView(
 ): IdeaCard[] {
   return rows.map((row) => {
     const author = row.author;
+    // Re-validate at render, not just at input: any writer (a future imported
+    // row, seed, a hand-edited DB value) could carry a non-http(s) URL, and we
+    // never want that reaching an <a href>. Only a real web URL becomes a link.
+    const safeUrl = row.url && isValidUrl(row.url) ? row.url : null;
     return {
       id: row.id,
       title: row.title,
       description: row.description,
-      url: row.url,
-      linkHost: row.url ? hostOf(row.url) : null,
+      url: safeUrl,
+      linkHost: safeUrl ? hostOf(safeUrl) : null,
       authorName: author ? displayName(author.name, author.email) : "Suggested",
       initials: author ? initialsFor(author.name, author.email) : "✦",
       accent: author

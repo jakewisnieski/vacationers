@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import {
   IDEA_DESCRIPTION_MAX,
   IDEA_TITLE_MAX,
+  IDEA_URL_MAX,
   type AddIdeaResult,
 } from "@/lib/ideas";
 import { addIdea } from "./actions";
@@ -41,6 +42,7 @@ export function AddIdeaForm() {
         <input
           type="url"
           name="url"
+          maxLength={IDEA_URL_MAX}
           placeholder="Link (optional)"
           className="min-w-56 flex-1 rounded-full border border-line bg-stage px-4 py-2 text-sm text-ink placeholder:text-ink-dim/60 focus:border-action focus:outline-none"
         />

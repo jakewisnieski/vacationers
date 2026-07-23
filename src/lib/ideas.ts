@@ -1,9 +1,11 @@
 // Pure ideas-board helpers — no I/O, so the add-idea validation and the board
 // view-model can be unit-tested without a database (#26). The server actions and
-// the /ideas screen build on these. Author display/initials/accents are shared
-// with the dashboard's view-model (#15).
+// the /ideas screen build on these. URL checks come from ./url and author
+// display/initials/accent + the delete gate from ./author, shared with the
+// activities board (#27) and the dashboard's view-model (#15).
 
-import { NIGHTFALL_ACCENTS, displayName, initialsFor } from "./dashboard";
+import { hostOf, isValidUrl } from "./url";
+import { presentAuthor, type AuthorInput } from "./author";
 
 export const IDEA_TITLE_MAX = 120;
 export const IDEA_DESCRIPTION_MAX = 500;
@@ -74,17 +76,6 @@ export function parseIdeaInput(raw: {
   };
 }
 
-/** A pragmatic web-URL check — parseable and http(s)-schemed. */
-export function isValidUrl(raw: string): boolean {
-  let parsed: URL;
-  try {
-    parsed = new URL(raw);
-  } catch {
-    return false;
-  }
-  return parsed.protocol === "http:" || parsed.protocol === "https:";
-}
-
 /** The raw shape the page pulls from Prisma — the fields the board needs. */
 export type IdeaRow = {
   id: string;
@@ -92,11 +83,7 @@ export type IdeaRow = {
   description: string | null;
   url: string | null;
   authorId: string | null;
-  author: {
-    name: string | null;
-    email: string;
-    accentColor: string | null;
-  } | null;
+  author: AuthorInput;
 };
 
 export type IdeaCard = {
@@ -114,57 +101,32 @@ export type IdeaCard = {
   canDelete: boolean;
 };
 
-// Neutral (ink-dim) accent for author-less ideas — the Qwen3 import seam (v0.4.0)
-// lands rows with no member author; until then no such rows exist.
-const IMPORTED_ACCENT = "#9aa3c0";
-
 /**
  * Fold Idea rows (already ordered by the query) into board card view-models,
- * resolving author identity, a stable accent, a link host, and — crucially —
- * whether the current member may delete each idea (author-only, #26).
+ * resolving author identity (author-less imported rows show as "Suggested"), a
+ * stable accent, a link host, and — crucially — whether the current member may
+ * delete each idea (author-only, #26).
  */
 export function buildIdeasView(
   rows: IdeaRow[],
   currentMemberId: string,
 ): IdeaCard[] {
   return rows.map((row) => {
-    const author = row.author;
     // Re-validate at render, not just at input: any writer (a future imported
     // row, seed, a hand-edited DB value) could carry a non-http(s) URL, and we
     // never want that reaching an <a href>. Only a real web URL becomes a link.
     const safeUrl = row.url && isValidUrl(row.url) ? row.url : null;
+    const author = presentAuthor(row.author, row.authorId, currentMemberId, {
+      name: "Suggested",
+      initials: "✦",
+    });
     return {
       id: row.id,
       title: row.title,
       description: row.description,
       url: safeUrl,
       linkHost: safeUrl ? hostOf(safeUrl) : null,
-      authorName: author ? displayName(author.name, author.email) : "Suggested",
-      initials: author ? initialsFor(author.name, author.email) : "✦",
-      accent: author
-        ? (author.accentColor ?? accentForSeed(author.email))
-        : IMPORTED_ACCENT,
-      canDelete: row.authorId !== null && row.authorId === currentMemberId,
+      ...author,
     };
   });
-}
-
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).host.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
-}
-
-/**
- * A deterministic accent slot from a seed (the author's email), so a given
- * author's ideas share one color even when they have no explicit `accentColor`.
- */
-function accentForSeed(seed: string): string {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
-  }
-  return NIGHTFALL_ACCENTS[Math.abs(hash) % NIGHTFALL_ACCENTS.length];
 }

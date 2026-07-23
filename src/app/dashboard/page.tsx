@@ -60,6 +60,12 @@ function TopBar({
         >
           Ideas
         </Link>
+        <Link
+          href="/activities"
+          className="rounded-full border border-line px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-stage-raised"
+        >
+          Things to do
+        </Link>
         {isOwner && (
           <Link
             href="/roster"

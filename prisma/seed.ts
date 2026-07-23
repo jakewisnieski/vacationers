@@ -113,6 +113,34 @@ async function main() {
   }
 
   console.log(`Seeded ${demoIdeas.length} demo destination ideas`);
+
+  // Demo things-to-do for the activities board (#27), authored by the
+  // display-only demo friends — so the board renders with real attribution.
+  // Idempotent: find-or-create by (trip, title).
+  const demoActivities = [
+    {
+      title: "Snorkel Silfra",
+      authorId: friends[0].id,
+      note: "Drysuit dive between the tectonic plates — book ahead.",
+      url: "https://www.dive.is/silfra" as string | null,
+    },
+    {
+      title: "Golden Circle day trip",
+      authorId: friends[2].id,
+      note: "Þingvellir, Geysir, Gullfoss — rent a car for the day.",
+      url: null as string | null,
+    },
+  ];
+  for (const activity of demoActivities) {
+    const exists = await prisma.activity.findFirst({
+      where: { tripId: trip.id, title: activity.title },
+    });
+    if (!exists) {
+      await prisma.activity.create({ data: { tripId: trip.id, ...activity } });
+    }
+  }
+
+  console.log(`Seeded ${demoActivities.length} demo activities`);
 }
 
 main()

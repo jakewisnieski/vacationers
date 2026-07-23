@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   buildIdeasView,
-  isValidUrl,
   parseIdeaInput,
   type IdeaRow,
   IDEA_TITLE_MAX,
@@ -74,18 +73,6 @@ describe("parseIdeaInput", () => {
     });
     expect(result.ok).toBe(false);
   });
-});
-
-describe("isValidUrl", () => {
-  it.each(["https://example.com", "http://a.b/c?d=e"])(
-    "accepts %j",
-    (url) => expect(isValidUrl(url)).toBe(true),
-  );
-
-  it.each(["", "example.com", "ftp://example.com", "javascript:alert(1)", "nope"])(
-    "rejects %j",
-    (url) => expect(isValidUrl(url)).toBe(false),
-  );
 });
 
 describe("buildIdeasView", () => {

@@ -74,10 +74,15 @@ export async function toggleIdeaVote(formData: FormData): Promise<void> {
       });
     }
   } catch (error) {
-    // A concurrent vote (P2002 unique) or a stale/forged ideaId (P2003 FK): the
-    // vote state already matches the click's intent, or the idea is gone —
-    // nothing to surface to the voter. Anything else is a real fault: rethrow.
-    if (!(error instanceof Prisma.PrismaClientKnownRequestError)) throw error;
+    // Only two outcomes are expected and benign: a concurrent vote losing the
+    // unique race (P2002), or a stale/forged ideaId whose Idea is gone (P2003 FK
+    // on create). In both, the vote state already matches the click's intent or
+    // the target no longer exists — nothing to surface to the voter. Any other
+    // error (or non-Prisma throw) is a real fault and must propagate.
+    const benign =
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2002" || error.code === "P2003");
+    if (!benign) throw error;
   }
 
   revalidatePath("/ideas");

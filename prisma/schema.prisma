@@ -35,6 +35,7 @@ model Member {
   calendarConnection CalendarConnection?
   ideas              Idea[]
   activities         Activity[]
+  ideaVotes          IdeaVote[]
 }
 
 /// The DB-authoritative invite allowlist (#5). An email must have an entry here
@@ -131,6 +132,23 @@ model Idea {
 
   trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
   author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  votes  IdeaVote[]
+}
+
+/// A member's upvote on a destination idea (#28, v0.2.0): a lightweight signal
+/// to surface the group's favorites on the ideas board. At most one per member
+/// per idea — enforced by the unique constraint, so voting is an idempotent
+/// toggle. Both sides cascade: a vote disappears with its idea or its member.
+model IdeaVote {
+  id        String   @id @default(cuid())
+  ideaId    String
+  memberId  String
+  createdAt DateTime @default(now())
+
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([ideaId, memberId])
 }
 
 /// The things-to-do board (#27, v0.2.0): a per-trip shared list of activities

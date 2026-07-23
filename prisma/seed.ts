@@ -84,6 +84,35 @@ async function main() {
       friends.length + 1
     } participants`,
   );
+
+  // Demo destination ideas for the ideas board (#26), authored by the
+  // display-only demo friends — so the board renders with real attribution and
+  // the owner can see ideas they can't delete (author-only removal). Idempotent:
+  // find-or-create by (trip, title).
+  const demoIdeas = [
+    {
+      title: "Reykjavík, Iceland",
+      authorId: friends[0].id,
+      description: "Ring road + Blue Lagoon; cheap shoulder-season flights.",
+      url: "https://www.roadtrip.is",
+    },
+    {
+      title: "Lisbon, Portugal",
+      authorId: friends[1].id,
+      description: "Warm in October, great food, easy to get around.",
+      url: null as string | null,
+    },
+  ];
+  for (const idea of demoIdeas) {
+    const exists = await prisma.idea.findFirst({
+      where: { tripId: trip.id, title: idea.title },
+    });
+    if (!exists) {
+      await prisma.idea.create({ data: { tripId: trip.id, ...idea } });
+    }
+  }
+
+  console.log(`Seeded ${demoIdeas.length} demo destination ideas`);
 }
 
 main()

@@ -54,6 +54,12 @@ function TopBar({
         Vacation<span className="text-action">ers</span>
       </span>
       <div className="flex items-center gap-3">
+        <Link
+          href="/ideas"
+          className="rounded-full border border-line px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-stage-raised"
+        >
+          Ideas
+        </Link>
         {isOwner && (
           <Link
             href="/roster"
@@ -139,7 +145,7 @@ function TripDashboard({
           sub={
             view.destination.known
               ? "Set for this trip"
-              : "Idea board opens in v0.2"
+              : "Pitch ideas on the board →"
           }
           variant="dest"
           filled={view.destination.known}

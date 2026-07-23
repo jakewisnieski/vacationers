@@ -34,6 +34,7 @@ model Member {
   participations     TripParticipant[]
   calendarConnection CalendarConnection?
   ideas              Idea[]
+  activities         Activity[]
 }
 
 /// The DB-authoritative invite allowlist (#5). An email must have an entry here
@@ -69,6 +70,7 @@ model Trip {
 
   participants TripParticipant[]
   ideas        Idea[]
+  activities   Activity[]
 }
 
 /// Per-trip participation — the dashboard's "who's in." Availability /
@@ -126,6 +128,24 @@ model Idea {
   url         String?
   status      IdeaStatus @default(approved)
   createdAt   DateTime   @default(now())
+
+  trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+/// The things-to-do board (#27, v0.2.0): a per-trip shared list of activities
+/// members want to do at the destination. `note` + `url` are the optional
+/// detail + reference link. `author` is nullable (SetNull) so an activity
+/// outlives the poster's Member row if they're removed; there is no import seam
+/// here (unlike Idea), so author-less rows only arise from a removed member.
+model Activity {
+  id        String   @id @default(cuid())
+  tripId    String
+  authorId  String?
+  title     String
+  note      String?
+  url       String?
+  createdAt DateTime @default(now())
 
   trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
   author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)

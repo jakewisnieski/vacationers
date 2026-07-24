@@ -5,16 +5,26 @@ import { getSessionUser } from "@/lib/authz";
 import { getCurrentTrip } from "@/lib/trip";
 import { buildIdeasView, type IdeaCard } from "@/lib/ideas";
 import { AddIdeaForm } from "./AddIdeaForm";
-import { deleteIdea } from "./actions";
+import { deleteIdea, toggleIdeaVote } from "./actions";
 
 // The destination ideas board (#26, v0.2.0): every member posts where they'd
 // like the trip to go, on the current trip. Group-level access (#5) — everyone
-// sees every idea; you can only delete your own.
+// sees every idea; you can only delete your own. Members upvote to surface the
+// group's favorites, and the board sorts by newest or most-voted (#28).
 
-export default async function IdeasPage() {
+/** Board ordering: "new" (newest first) or "top" (most-voted first). */
+type SortMode = "new" | "top";
+
+export default async function IdeasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
   const user = await getSessionUser();
   if (!user) redirect("/");
 
+  const { sort } = await searchParams;
+  const sortMode: SortMode = sort === "top" ? "top" : "new";
   const trip = await getCurrentTrip();
 
   return (
@@ -33,7 +43,11 @@ export default async function IdeasPage() {
         </p>
 
         {trip ? (
-          <IdeasBoard tripId={trip.id} currentMemberId={user.memberId} />
+          <IdeasBoard
+            tripId={trip.id}
+            currentMemberId={user.memberId}
+            sort={sortMode}
+          />
         ) : null}
       </section>
     </main>
@@ -43,13 +57,20 @@ export default async function IdeasPage() {
 async function IdeasBoard({
   tripId,
   currentMemberId,
+  sort,
 }: {
   tripId: string;
   currentMemberId: string;
+  sort: SortMode;
 }) {
   const rows = await prisma.idea.findMany({
     where: { tripId, status: "approved" },
-    orderBy: { createdAt: "desc" },
+    // Most-voted first when sorting by "top", with newest breaking ties; else
+    // strictly newest. The count lives in the relation, so order by it directly.
+    orderBy:
+      sort === "top"
+        ? [{ votes: { _count: "desc" } }, { createdAt: "desc" }]
+        : { createdAt: "desc" },
     select: {
       id: true,
       title: true,
@@ -57,6 +78,10 @@ async function IdeasBoard({
       url: true,
       authorId: true,
       author: { select: { name: true, email: true, accentColor: true } },
+      // Total votes for the count; the current member's own vote (0 or 1 row)
+      // for the "have I voted?" state — never the whole vote list.
+      _count: { select: { votes: true } },
+      votes: { where: { memberId: currentMemberId }, select: { id: true } },
     },
   });
   const ideas = buildIdeasView(rows, currentMemberId);
@@ -81,14 +106,49 @@ async function IdeasBoard({
             </p>
           </div>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {ideas.map((idea) => (
-              <IdeaItem key={idea.id} idea={idea} />
-            ))}
-          </ul>
+          <>
+            <div className="mb-3 flex items-center gap-2 text-sm">
+              <span className="text-ink-dim">Sort</span>
+              <SortTab active={sort === "new"} href="/ideas" label="Newest" />
+              <SortTab
+                active={sort === "top"}
+                href="/ideas?sort=top"
+                label="Most voted"
+              />
+            </div>
+            <ul className="flex flex-col gap-3">
+              {ideas.map((idea) => (
+                <IdeaItem key={idea.id} idea={idea} />
+              ))}
+            </ul>
+          </>
         )}
       </div>
     </>
+  );
+}
+
+function SortTab({
+  active,
+  href,
+  label,
+}: {
+  active: boolean;
+  href: string;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "true" : undefined}
+      className={`rounded-full border px-3 py-1 font-medium transition-colors ${
+        active
+          ? "border-action bg-action/15 text-action"
+          : "border-line text-ink-dim hover:text-ink hover:bg-stage"
+      }`}
+    >
+      {label}
+    </Link>
   );
 }
 
@@ -103,17 +163,20 @@ function IdeaItem({ idea }: { idea: IdeaCard }) {
             <span className="truncate">{idea.authorName}</span>
           </div>
         </div>
-        {idea.canDelete && (
-          <form action={deleteIdea}>
-            <input type="hidden" name="ideaId" value={idea.id} />
-            <button
-              type="submit"
-              className="shrink-0 rounded-full border border-line px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-stage"
-            >
-              Remove
-            </button>
-          </form>
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          <VoteButton idea={idea} />
+          {idea.canDelete && (
+            <form action={deleteIdea}>
+              <input type="hidden" name="ideaId" value={idea.id} />
+              <button
+                type="submit"
+                className="rounded-full border border-line px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-stage"
+              >
+                Remove
+              </button>
+            </form>
+          )}
+        </div>
       </div>
 
       {idea.description && (
@@ -132,6 +195,31 @@ function IdeaItem({ idea }: { idea: IdeaCard }) {
         </a>
       )}
     </li>
+  );
+}
+
+function VoteButton({ idea }: { idea: IdeaCard }) {
+  return (
+    <form action={toggleIdeaVote}>
+      <input type="hidden" name="ideaId" value={idea.id} />
+      <button
+        type="submit"
+        aria-pressed={idea.hasVoted}
+        aria-label={
+          idea.hasVoted
+            ? `Remove your upvote (${idea.voteCount})`
+            : `Upvote this idea (${idea.voteCount})`
+        }
+        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors ${
+          idea.hasVoted
+            ? "border-action bg-action/15 text-action"
+            : "border-line text-ink-dim hover:bg-stage hover:text-ink"
+        }`}
+      >
+        <span aria-hidden>▲</span>
+        <span className="tabular-nums">{idea.voteCount}</span>
+      </button>
+    </form>
   );
 }
 

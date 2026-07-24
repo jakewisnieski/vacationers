@@ -114,6 +114,32 @@ async function main() {
 
   console.log(`Seeded ${demoIdeas.length} demo destination ideas`);
 
+  // Demo upvotes (#28) so the board shows counts and the most-voted sort out of
+  // the box — Reykjavík out-votes Lisbon. Idempotent via the unique (idea,
+  // member) key; find the idea by title so this doesn't depend on create order.
+  const demoVotes = [
+    {
+      title: "Reykjavík, Iceland",
+      memberIds: [owner.id, friends[1].id, friends[2].id],
+    },
+    { title: "Lisbon, Portugal", memberIds: [owner.id] },
+  ];
+  for (const { title, memberIds } of demoVotes) {
+    const idea = await prisma.idea.findFirst({
+      where: { tripId: trip.id, title },
+    });
+    if (!idea) continue;
+    for (const memberId of memberIds) {
+      await prisma.ideaVote.upsert({
+        where: { ideaId_memberId: { ideaId: idea.id, memberId } },
+        update: {},
+        create: { ideaId: idea.id, memberId },
+      });
+    }
+  }
+
+  console.log("Seeded demo idea votes");
+
   // Demo things-to-do for the activities board (#27), authored by the
   // display-only demo friends — so the board renders with real attribution.
   // Idempotent: find-or-create by (trip, title).

@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireMember } from "@/lib/authz";
@@ -50,5 +51,39 @@ export async function deleteIdea(formData: FormData): Promise<void> {
   if (!id) return;
 
   await prisma.idea.deleteMany({ where: { id, authorId: user.memberId } });
+  revalidatePath("/ideas");
+}
+
+/** Toggle the current member's upvote on an idea (#28). Idempotent: removes the
+ * vote if one exists, else adds one — so a click is vote / un-vote. The
+ * `@@unique([ideaId, memberId])` constraint is the ultimate guard against a
+ * double-vote race; the create is wrapped to absorb that race and a stale id. */
+export async function toggleIdeaVote(formData: FormData): Promise<void> {
+  const user = await requireMember();
+
+  const ideaId = String(formData.get("ideaId") ?? "");
+  if (!ideaId) return;
+
+  try {
+    const removed = await prisma.ideaVote.deleteMany({
+      where: { ideaId, memberId: user.memberId },
+    });
+    if (removed.count === 0) {
+      await prisma.ideaVote.create({
+        data: { ideaId, memberId: user.memberId },
+      });
+    }
+  } catch (error) {
+    // Only two outcomes are expected and benign: a concurrent vote losing the
+    // unique race (P2002), or a stale/forged ideaId whose Idea is gone (P2003 FK
+    // on create). In both, the vote state already matches the click's intent or
+    // the target no longer exists — nothing to surface to the voter. Any other
+    // error (or non-Prisma throw) is a real fault and must propagate.
+    const benign =
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2002" || error.code === "P2003");
+    if (!benign) throw error;
+  }
+
   revalidatePath("/ideas");
 }

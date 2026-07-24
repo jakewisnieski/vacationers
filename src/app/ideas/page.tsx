@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/authz";
 import { getCurrentTrip } from "@/lib/trip";
 import { buildIdeasView, type IdeaCard } from "@/lib/ideas";
+import { buildCommentsView, type CommentCard } from "@/lib/comments";
+import { CommentThread } from "@/app/comments/CommentThread";
 import { AddIdeaForm } from "./AddIdeaForm";
 import { deleteIdea, toggleIdeaVote } from "./actions";
 
@@ -86,6 +88,30 @@ async function IdeasBoard({
   });
   const ideas = buildIdeasView(rows, currentMemberId);
 
+  // Comments live in a polymorphic table (no Idea relation to `include`), so pull
+  // the thread rows for these ideas in one indexed query and group them by idea
+  // (#30). Ordered oldest-first so each thread reads top-to-bottom.
+  const ideaIds = ideas.map((idea) => idea.id);
+  const commentRows = ideaIds.length
+    ? await prisma.comment.findMany({
+        where: { targetType: "idea", targetId: { in: ideaIds } },
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          body: true,
+          targetId: true,
+          authorId: true,
+          author: { select: { name: true, email: true, accentColor: true } },
+        },
+      })
+    : [];
+  const commentsByIdea = new Map<string, typeof commentRows>();
+  for (const row of commentRows) {
+    const thread = commentsByIdea.get(row.targetId);
+    if (thread) thread.push(row);
+    else commentsByIdea.set(row.targetId, [row]);
+  }
+
   return (
     <>
       <div className="mt-8 rounded-2xl border border-line bg-stage-raised p-6">
@@ -118,7 +144,14 @@ async function IdeasBoard({
             </div>
             <ul className="flex flex-col gap-3">
               {ideas.map((idea) => (
-                <IdeaItem key={idea.id} idea={idea} />
+                <IdeaItem
+                  key={idea.id}
+                  idea={idea}
+                  comments={buildCommentsView(
+                    commentsByIdea.get(idea.id) ?? [],
+                    currentMemberId,
+                  )}
+                />
               ))}
             </ul>
           </>
@@ -152,7 +185,13 @@ function SortTab({
   );
 }
 
-function IdeaItem({ idea }: { idea: IdeaCard }) {
+function IdeaItem({
+  idea,
+  comments,
+}: {
+  idea: IdeaCard;
+  comments: CommentCard[];
+}) {
   return (
     <li className="rounded-2xl border border-line bg-stage-raised p-5">
       <div className="flex items-start justify-between gap-3">
@@ -194,6 +233,8 @@ function IdeaItem({ idea }: { idea: IdeaCard }) {
           <span className="truncate">{idea.linkHost ?? "Link"}</span>
         </a>
       )}
+
+      <CommentThread targetType="idea" targetId={idea.id} comments={comments} />
     </li>
   );
 }

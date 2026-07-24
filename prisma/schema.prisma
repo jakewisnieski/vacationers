@@ -38,6 +38,7 @@ model Member {
   ideaVotes          IdeaVote[]
   pollsAuthored      Poll[]
   pollVotes          PollVote[]
+  comments           Comment[]
 }
 
 /// The DB-authoritative invite allowlist (#5). An email must have an entry here
@@ -223,4 +224,35 @@ model PollVote {
   member Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@unique([pollId, memberId])
+}
+
+/// What a comment is attached to (#30). The comment thread is intentionally
+/// polymorphic so ideas, activities, and polls share one model — this slice
+/// wires only ideas in the UI, but the model already supports the rest with no
+/// later migration.
+enum CommentTarget {
+  idea
+  activity
+  poll
+}
+
+/// A discussion comment (#30, v0.2.0), attached polymorphically to an idea,
+/// activity, or poll via (`targetType`, `targetId`). `targetId` is a plain id,
+/// not a relational FK — the target lives in a different table per `targetType`,
+/// so referential integrity for the target is enforced in the action (the
+/// target's existence is checked before a comment is created), not by the DB.
+/// `author` is nullable (SetNull) so a comment outlives its poster's Member row
+/// if they're removed. Indexed on (`targetType`, `targetId`) — the one access
+/// path: "the thread for this target, in order."
+model Comment {
+  id         String        @id @default(cuid())
+  targetType CommentTarget
+  targetId   String
+  authorId   String?
+  body       String
+  createdAt  DateTime      @default(now())
+
+  author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([targetType, targetId])
 }

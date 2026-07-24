@@ -66,6 +66,12 @@ function TopBar({
         >
           Things to do
         </Link>
+        <Link
+          href="/polls"
+          className="rounded-full border border-line px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:bg-stage-raised"
+        >
+          Polls
+        </Link>
         {isOwner && (
           <Link
             href="/roster"

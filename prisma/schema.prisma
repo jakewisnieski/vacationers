@@ -36,6 +36,8 @@ model Member {
   ideas              Idea[]
   activities         Activity[]
   ideaVotes          IdeaVote[]
+  pollsAuthored      Poll[]
+  pollVotes          PollVote[]
 }
 
 /// The DB-authoritative invite allowlist (#5). An email must have an entry here
@@ -72,6 +74,7 @@ model Trip {
   participants TripParticipant[]
   ideas        Idea[]
   activities   Activity[]
+  polls        Poll[]
 }
 
 /// Per-trip participation — the dashboard's "who's in." Availability /
@@ -167,4 +170,57 @@ model Activity {
 
   trip   Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
   author Member? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+/// A structured poll on a trip (#29, v0.2.0): a question with 2+ options the
+/// group votes on to settle a planning decision (which week, which rental…).
+/// Single-choice for v1 — at most one vote per member per poll (see PollVote).
+/// `author` is nullable (SetNull) so a poll outlives its creator's Member row if
+/// they're removed. `closedAt` marks it closed: it then takes no new votes but
+/// still shows results. Options and votes cascade with the poll.
+model Poll {
+  id        String    @id @default(cuid())
+  tripId    String
+  authorId  String?
+  question  String
+  closedAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  trip    Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  author  Member?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  options PollOption[]
+  votes   PollVote[]
+}
+
+/// One selectable option on a poll (#29). `position` preserves the author's
+/// input order for a stable results display (options render in the order typed).
+/// Deleting the poll cascades its options — and each option's votes.
+model PollOption {
+  id       String @id @default(cuid())
+  pollId   String
+  label    String
+  position Int
+
+  poll  Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes PollVote[]
+}
+
+/// A member's single vote on a poll (#29): single-choice for v1, so at most one
+/// per member per poll — enforced by `@@unique([pollId, memberId])`. `pollId` is
+/// stored alongside `optionId` precisely so that constraint can hold at the DB
+/// level (the action guarantees the option belongs to the poll). Changing a vote
+/// moves it (updates `optionId`); it never adds a second row. Cascades with the
+/// poll, the option, or the member.
+model PollVote {
+  id        String   @id @default(cuid())
+  pollId    String
+  optionId  String
+  memberId  String
+  createdAt DateTime @default(now())
+
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  member Member     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, memberId])
 }

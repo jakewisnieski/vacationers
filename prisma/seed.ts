@@ -167,6 +167,50 @@ async function main() {
   }
 
   console.log(`Seeded ${demoActivities.length} demo activities`);
+
+  // Demo poll (#29) so the polls board renders with a real question, options,
+  // and a live tally out of the box — Oct 9–12 leads. Idempotent: find-or-create
+  // by (trip, question); votes upsert on the unique (poll, member) key.
+  const demoPollQuestion = "Which week works best?";
+  const existingPoll = await prisma.poll.findFirst({
+    where: { tripId: trip.id, question: demoPollQuestion },
+    include: { options: { orderBy: { position: "asc" } } },
+  });
+  const demoPoll =
+    existingPoll ??
+    (await prisma.poll.create({
+      data: {
+        tripId: trip.id,
+        authorId: owner.id,
+        question: demoPollQuestion,
+        options: {
+          create: [
+            { label: "Oct 9–12", position: 0 },
+            { label: "Oct 16–19", position: 1 },
+            { label: "Oct 23–26", position: 2 },
+          ],
+        },
+      },
+      include: { options: { orderBy: { position: "asc" } } },
+    }));
+
+  const [weekA, weekB] = demoPoll.options;
+  const demoPollVotes = [
+    { memberId: owner.id, optionId: weekA.id },
+    { memberId: friends[0].id, optionId: weekA.id },
+    { memberId: friends[1].id, optionId: weekB.id },
+  ];
+  for (const { memberId, optionId } of demoPollVotes) {
+    await prisma.pollVote.upsert({
+      where: { pollId_memberId: { pollId: demoPoll.id, memberId } },
+      update: { optionId },
+      create: { pollId: demoPoll.id, optionId, memberId },
+    });
+  }
+
+  console.log(
+    `Seeded demo poll "${demoPoll.question}" with ${demoPollVotes.length} votes`,
+  );
 }
 
 main()

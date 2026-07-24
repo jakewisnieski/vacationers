@@ -211,6 +211,37 @@ async function main() {
   console.log(
     `Seeded demo poll "${demoPoll.question}" with ${demoPollVotes.length} votes`,
   );
+
+  // Demo comments (#30) on a demo idea so the discussion thread renders on a
+  // fresh seed, with real attribution the owner can't delete (author-only
+  // removal). Idempotent: find-first by (targetType, targetId, body).
+  const reykjavik = await prisma.idea.findFirst({
+    where: { tripId: trip.id, title: "Reykjavík, Iceland" },
+  });
+  const demoComments = reykjavik
+    ? [
+        {
+          targetId: reykjavik.id,
+          authorId: owner.id,
+          body: "The ring road in a week is doable — did it a few years back.",
+        },
+        {
+          targetId: reykjavik.id,
+          authorId: friends[1].id,
+          body: "Blue Lagoon on the last day before the flight home?",
+        },
+      ]
+    : [];
+  for (const comment of demoComments) {
+    const exists = await prisma.comment.findFirst({
+      where: { targetType: "idea", targetId: comment.targetId, body: comment.body },
+    });
+    if (!exists) {
+      await prisma.comment.create({ data: { targetType: "idea", ...comment } });
+    }
+  }
+
+  console.log(`Seeded ${demoComments.length} demo comments`);
 }
 
 main()
